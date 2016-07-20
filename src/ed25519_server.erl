@@ -11,6 +11,7 @@
          code_change/3]).
 
 -export([getkey/0]).
+-export([status/0]).
 
 -record(state, {boxpub, signpub, boxsec, signsec}).
 
@@ -19,6 +20,9 @@ start_link()->
 
 getkey()->
     gen_server:call(?MODULE, {getkey}).
+
+status()->
+    gen_server:call(?MODULE, {status}).
 
 %% ---------------------------------------
 %% gen_server callbacks
@@ -35,7 +39,9 @@ init(_)->
     }.
 
 handle_call({getkey}, _From, State)->
-    {reply, {ok, State#state.boxpub, State#state.boxsec}, State}.
+    {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
+handle_call({status}, _From, State)->
+    {reply, {ok, State#state.boxpub}, State}.
 
 
 handle_cast(_Msg, State)->

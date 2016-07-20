@@ -2,6 +2,7 @@
 
 %% API exports
 -export([decrypt/4]).
+-export([status/0]).
 
 %%====================================================================
 %% API functions
@@ -15,6 +16,10 @@ decrypt(PeerPubHex, Nonce, MsgKey64, MsgCipher64)->
     MsgBin = base64:decode(MsgCipher64),
     {ok, Msg} = salt:crypto_secretbox_open(MsgBin, Nonce, MsgKey),
     {ok, Msg}.
+
+
+status()->
+    ed25519_server:status().
 
 
 %%====================================================================
