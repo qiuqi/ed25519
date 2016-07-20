@@ -11,6 +11,7 @@
          code_change/3]).
 
 -export([getkey/0]).
+-export([sign/1]).
 -export([status/0]).
 
 -record(state, {boxpub, signpub, boxsec, signsec}).
@@ -20,6 +21,9 @@ start_link()->
 
 getkey()->
     gen_server:call(?MODULE, {getkey}).
+
+sign(Message)->
+    gen_server:sign(?MODULE, {sign, Message}).
 
 status()->
     gen_server:call(?MODULE, {status}).
@@ -40,6 +44,8 @@ init(_)->
 
 handle_call({getkey}, _From, State)->
     {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
+handle_call({sign, Message}, _From, State)->
+    {reply, salt:crypto_sign(Message, State#state.signsec), State};
 handle_call({status}, _From, State)->
     {reply, {ok, State#state.boxpub}, State}.
 
