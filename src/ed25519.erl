@@ -2,7 +2,9 @@
 
 %% API exports
 -export([decrypt/4]).
+-export([getkey/0]).
 -export([encrypt/2]).
+-export([newkey/0]).
 -export([setkey/4]).
 -export([sign/1]).
 -export([status/0]).
@@ -10,6 +12,13 @@
 %%====================================================================
 %% API functions
 %%====================================================================
+
+%% @doc
+%% return: {ok, ServerPubBin}
+-spec getkey()->{ok, binary()}.
+getkey()->
+    {ok, ServerPubBin, _ServerSecBin} = ed25519_server:getkey(),
+    {ok, ServerPubBin}.
 
 -spec decrypt(binary(), binary(), binary(), binary())->{ok, binary()}.
 decrypt(PeerPub, Nonce, MsgKey, MsgCipher)->
@@ -27,7 +36,13 @@ encrypt(PeerPub, Message)->
     MsgCipher = salt:crypto_secretbox(Message, NonceBin, MsgKeyClear),
     {ok, Nonce, MsgKeyCipher, MsgCipher}.
 
+%% @doc
+%% {ok, BoxPubHex, BoxSecHex, SignPubHex, SignSecHex}
+-spec newkey()->{ok, list(), list(), list(), list()}.
+newkey()->
+    ed25519_server:newkey().
 
+-spec setkey(list(), list(), list(), list())->ok.
 setkey(BoxPub, SignPub, BoxSec, SignSec)->
     ed25519_server:setkey(BoxPub, SignPub, BoxSec, SignSec).
 

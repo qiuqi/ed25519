@@ -11,6 +11,7 @@
          code_change/3]).
 
 -export([getkey/0]).
+-export([newkey/0]).
 -export([setkey/4]).
 -export([sign/1]).
 -export([status/0]).
@@ -23,9 +24,11 @@ start_link()->
 getkey()->
     gen_server:call(?MODULE, {getkey}).
 
+newkey()->
+    gen_server:call(?MODULE, {newkey}).
+
 setkey(BoxPub, SignPub, BoxSec, SignSec)->
     gen_server:call(?MODULE, {setkey, BoxPub, SignPub, BoxSec, SignSec}).
-
 
 sign(Message)->
     gen_server:call(?MODULE, {sign, Message}).
@@ -43,6 +46,14 @@ init(_)->
 
 handle_call({getkey}, _From, State)->
     {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
+handle_call({newkey}, _From, State)->
+    {BoxPubBin, BoxSecBin} = salt:crypto_box_keypair(),
+    {SignPubBin, SignSecBin} = salt:crypto_sign_keypair(),
+    BoxPubHex = mochihex:to_hex(BoxPubBin),
+    BoxSecHex = mochihex:to_hex(BoxSecBin),
+    SignPubHex = mochihex:to_hex(SignPubBin),
+    SignSecHex = mochihex:to_hex(SignSecBin),
+    {reply, {ok, BoxPubHex, BoxSecHex, SignPubHex, SignSecHex}, State};
 handle_call({setkey, BoxPub, SignPub, BoxSec, SignSec}, _From, _State)->
     {reply, ok, #state{
                    boxpub = qqhex:hexstr_to_bin(BoxPub),
