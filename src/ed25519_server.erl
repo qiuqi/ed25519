@@ -11,6 +11,7 @@
          code_change/3]).
 
 -export([getkey/0]).
+-export([setkey/4]).
 -export([sign/1]).
 -export([status/0]).
 
@@ -21,6 +22,10 @@ start_link()->
 
 getkey()->
     gen_server:call(?MODULE, {getkey}).
+
+setkey(BoxPub, SignPub, BoxSec, SignSec)->
+    gen_server:call(?MODULE, {setkey, BoxPub, SignPub, BoxSec, SignSec}).
+
 
 sign(Message)->
     gen_server:call(?MODULE, {sign, Message}).
@@ -34,16 +39,16 @@ status()->
 
 init(_)->
     process_flag(trap_exit, true),
-    {ok, #state{
-            boxpub = hex:hexstr_to_bin("7038130a3af6bbcd8228d988862863991a22c39eb704b11fb6b1314d9792ec59"),
-            signpub = hex:hexstr_to_bin("dce48481808df3b6a37d14c83c4d326519edae3086d92f1d48cafbe1852a45ee"),
-            boxsec = hex:hexstr_to_bin("4317252e7e248223c26f0b3210f4faeaa4626c83f41bed1e9182692c368fb064"),
-            signsec = hex:hexstr_to_bin("96e1679639279e898263b2c4bbe829cb34c8fd5f9923e04bae6b1d99fb64d49ddce48481808df3b6a37d14c83c4d326519edae3086d92f1d48cafbe1852a45ee")
-           }
-    }.
+    {ok, #state{}}.
 
 handle_call({getkey}, _From, State)->
     {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
+handle_call({setkey, BoxPub, SignPub, BoxSec, SignSec}, _From, _State)->
+    {reply, ok, #state{
+                   boxpub = hex:hexstr_to_bin(BoxPub),
+                   signpub = hex:hexstr_to_bin(SignPub),
+                   boxsec = hex:hexstr_to_bin(BoxSec),
+                   signsec = hex:hexstr_to_bin(SignSec)}};
 handle_call({sign, Message}, _From, State)->
     {reply, salt:crypto_sign(Message, State#state.signsec), State};
 handle_call({status}, _From, State)->
