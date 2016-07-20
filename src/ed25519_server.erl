@@ -45,10 +45,10 @@ handle_call({getkey}, _From, State)->
     {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
 handle_call({setkey, BoxPub, SignPub, BoxSec, SignSec}, _From, _State)->
     {reply, ok, #state{
-                   boxpub = hex:hexstr_to_bin(BoxPub),
-                   signpub = hex:hexstr_to_bin(SignPub),
-                   boxsec = hex:hexstr_to_bin(BoxSec),
-                   signsec = hex:hexstr_to_bin(SignSec)}};
+                   boxpub = qqhex:hexstr_to_bin(BoxPub),
+                   signpub = qqhex:hexstr_to_bin(SignPub),
+                   boxsec = qqhex:hexstr_to_bin(BoxSec),
+                   signsec = qqhex:hexstr_to_bin(SignSec)}};
 handle_call({sign, Message}, _From, State)->
     {reply, salt:crypto_sign(Message, State#state.signsec), State};
 handle_call({status}, _From, State)->
