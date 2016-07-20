@@ -11,9 +11,8 @@
 -spec decrypt(binary(), binary(), binary(), binary())->{ok, binary()}.
 decrypt(PeerPub, Nonce, MsgKey, MsgCipher)->
     {ok, _ServerPubBin, ServerSecBin} = ed25519_server:getkey(),
-    {ok, MsgKey} = salt:crypto_box_open(MsgKey, Nonce, PeerPub, ServerSecBin),
-    {ok, Msg} = salt:crypto_secretbox_open(MsgCipher, Nonce, MsgKey),
-    {ok, Msg}.
+    {ok, MsgKeyPlain} = salt:crypto_box_open(MsgKey, Nonce, PeerPub, ServerSecBin),
+    salt:crypto_secretbox_open(MsgCipher, Nonce, MsgKeyPlain).
 
 
 status()->
