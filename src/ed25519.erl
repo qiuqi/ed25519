@@ -8,13 +8,11 @@
 %% API functions
 %%====================================================================
 
-decrypt(PeerPubHex, Nonce, MsgKey64, MsgCipher64)->
-    PeerPubBin = hex:hexstr_to_bin(PeerPubHex),
-    MsgKeyBin = base64:decode(MsgKey64),
+-spec decrypt(binary(), binary(), binary(), binary())->{ok, binary()}.
+decrypt(PeerPub, Nonce, MsgKey, MsgCipher)->
     {ok, _ServerPubBin, ServerSecBin} = ed25519_server:getkey(),
-    {ok, MsgKey} = salt:crypto_box_open(MsgKeyBin, Nonce, PeerPubBin, ServerSecBin),
-    MsgBin = base64:decode(MsgCipher64),
-    {ok, Msg} = salt:crypto_secretbox_open(MsgBin, Nonce, MsgKey),
+    {ok, MsgKey} = salt:crypto_box_open(MsgKey, Nonce, PeerPub, ServerSecBin),
+    {ok, Msg} = salt:crypto_secretbox_open(MsgCipher, Nonce, MsgKey),
     {ok, Msg}.
 
 
