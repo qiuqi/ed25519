@@ -1,0 +1,16 @@
+{application, 'ed25519',
+ [{description, "ed25519 encrypt/decrypt for mixun message protocol"},
+  {vsn, "0.1.0"},
+  {registered, [ed25519_sup]},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {mod, {ed25519_app, []}},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, [{"Github", "https://github.com/qiuqi/ed25519"}]}
+ ]}.
