@@ -23,7 +23,7 @@ getkey()->
     gen_server:call(?MODULE, {getkey}).
 
 sign(Message)->
-    gen_server:sign(?MODULE, {sign, Message}).
+    gen_server:call(?MODULE, {sign, Message}).
 
 status()->
     gen_server:call(?MODULE, {status}).
