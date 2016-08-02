@@ -1,4 +1,5 @@
 -module(libws).
+-include_lib("liberl/include/liberl.hrl").
 -export([decrypt/4]).
 -export([encrypt/2]).
 -export([encrypt_json/2]).
