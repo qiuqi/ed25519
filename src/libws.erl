@@ -23,8 +23,8 @@ encrypt_json(PeerPub, Json)->
     Msg = mochijson2:encode(Json),
     encrypt(PeerPub, Msg).
 
-decode(PeerPub, Msg)->
-    {struct, Json} = ?JSON_DECODE(Msg),
+decode(PeerPub, MsgCipher)->
+    {struct, Json} = ?JSON_DECODE(MsgCipher),
     Nonce = ?GETVALUE(<<"n">>, Json),
     Key = ?GETVALUE(<<"k">>, Json),
     Msg = ?GETVALUE(<<"m">>, Json),
