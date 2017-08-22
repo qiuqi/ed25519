@@ -3,6 +3,7 @@
 %% API exports
 -export([decrypt/4]).
 -export([getkey/0]).
+-export([getkeyhex/0]).
 -export([encrypt/2]).
 -export([newkey/0]).
 -export([setkey/4]).
@@ -19,6 +20,14 @@
 getkey()->
     {ok, ServerPubBin, _ServerSecBin} = ed25519_server:getkey(),
     {ok, ServerPubBin}.
+
+
+%% @doc
+%% return: {ok, ServerPubHex}
+-spec getkeyhex()->{ok, list()}.
+getkeyhex()->
+    {ok, ServerPubHex, _ServerSecHex} = ed25519_server:getkeyhex(),
+    {ok, ServerPubHex}.
 
 -spec decrypt(binary(), binary(), binary(), binary())->{ok, binary()}.
 decrypt(PeerPub, Nonce, MsgKey, MsgCipher)->

@@ -11,18 +11,22 @@
          code_change/3]).
 
 -export([getkey/0]).
+-export([getkeyhex/0]).
 -export([newkey/0]).
 -export([setkey/4]).
 -export([sign/1]).
 -export([status/0]).
 
--record(state, {boxpub, signpub, boxsec, signsec}).
+-record(state, {boxpub, signpub, boxsec, signsec, boxpubhex, signpubhex, boxsechex, signsechex}).
 
 start_link()->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 getkey()->
     gen_server:call(?MODULE, {getkey}).
+
+getkeyhex()->
+    gen_server:call(?MODULE, {getkeyhex}).
 
 newkey()->
     gen_server:call(?MODULE, {newkey}).
@@ -46,6 +50,10 @@ init(_)->
 
 handle_call({getkey}, _From, State)->
     {reply, {ok, State#state.boxpub, State#state.boxsec}, State};
+
+handle_call({getkeyhex}, _From, State) ->
+    {reply, {ok, State#state.boxpubhex, State#state.boxsechex}, State};
+
 handle_call({newkey}, _From, State)->
     {BoxPubBin, BoxSecBin} = salt:crypto_box_keypair(),
     {SignPubBin, SignSecBin} = salt:crypto_sign_keypair(),
@@ -54,8 +62,13 @@ handle_call({newkey}, _From, State)->
     SignPubHex = mochihex:to_hex(SignPubBin),
     SignSecHex = mochihex:to_hex(SignSecBin),
     {reply, {ok, BoxPubHex, BoxSecHex, SignPubHex, SignSecHex}, State};
+
 handle_call({setkey, BoxPub, SignPub, BoxSec, SignSec}, _From, _State)->
     {reply, ok, #state{
+                   boxpubhex = BoxPub,
+                   signpubhex = SignPub,
+                   boxsechex = BoxSec,
+                   signsechex = SignSec,
                    boxpub = qqhex:hexstr_to_bin(BoxPub),
                    signpub = qqhex:hexstr_to_bin(SignPub),
                    boxsec = qqhex:hexstr_to_bin(BoxSec),
